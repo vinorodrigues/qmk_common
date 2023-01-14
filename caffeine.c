@@ -51,9 +51,16 @@ static void __caffeine_blink(void) {
     }
 }
 
+#ifdef VIAL_PROTOCOL_VERSION
 void rgb_matrix_indicators_caffeine(void) {
     __caffeine_blink();
 }
+#else
+bool rgb_matrix_indicators_caffeine(void) {
+    __caffeine_blink();
+    return true;
+}
+#endif  // VIAL_PROTOCOL_VERSION
 
 bool led_update_caffeine(led_t led_state) {
     __caffeine_blink();

@@ -56,6 +56,10 @@ bool rgb_matrix_indicators_advanced_keychron(uint8_t led_min, uint8_t led_max);
 #if defined(RGB_MATRIX_ENABLE) && ( defined(CAPS_LOCK_LED_INDEX) || \
     defined(NUM_LOCK_LED_INDEX) || defined(SCROLL_LOCK_LED_INDEX) )
 uint8_t light_brightness_get(void);
+#ifdef VIAL_PROTOCOL_VERSION
 void rgb_matrix_indicators_keychron(void);
+#else
+bool rgb_matrix_indicators_keychron(void);
+#endif  // VIAL_PROTOCOL_VERSION
 bool led_update_keychron(led_t led_state);
 #endif  // RGB_MATRIX_ENABLE & CAPS_LOCK_LED_INDEX | NUM_LOCK_LED_INDEX | SCROLL_LOCK_LED_INDEX

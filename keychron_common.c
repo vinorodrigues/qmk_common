@@ -234,7 +234,13 @@ static void __rgb_matrix_set_color_w(int index) {
 }
 #endif  // CAPS_LOCK_LED_COLOR | NUM_LOCK_LED_COLOR | SCROLL_LOCK_LED_COLOR
 
+
+#ifdef VIAL_PROTOCOL_VERSION
 void rgb_matrix_indicators_keychron(void) {
+#else
+bool rgb_matrix_indicators_keychron(void) {
+#endif  // VIAL_PROTOCOL_VERSION
+
     // this code executes when the matrix is enabled
 
     #ifdef CAPS_LOCK_LED_INDEX
@@ -266,6 +272,10 @@ void rgb_matrix_indicators_keychron(void) {
         #endif  // SCROLL_LOCK_LED_COLOR
     }
     #endif  // SCROLL_LOCK_LED_INDEX
+
+    #ifndef VIAL_PROTOCOL_VERSION
+    return true;
+    #endif  // VIAL_PROTOCOL_VERSION
 }
 
 bool led_update_keychron(led_t led_state) {

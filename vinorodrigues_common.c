@@ -18,6 +18,12 @@ typedef union {
     };
 } led_sngltn_t;
 
+#ifndef RGB_MATRIX_MAXIMUM_BRIGHTNESS
+    #define INDICATOR_MAXIMUM_BRIGHTNESS 0xFF
+#else
+    #define INDICATOR_MAXIMUM_BRIGHTNESS RGB_MATRIX_MAXIMUM_BRIGHTNESS
+#endif
+
 led_sngltn_t led_sngltn;
 
 extern void rgb_matrix_update_pwm_buffers(void);
@@ -25,6 +31,7 @@ extern void rgb_matrix_update_pwm_buffers(void);
 #endif  // RGB_MATRIX_ENABLE
 
 void housekeeping_task_vinorodrigues(void) {
+    // do nothing
 }
 
 bool process_record_vinorodrigues(uint16_t keycode, keyrecord_t *record) {
@@ -32,7 +39,7 @@ bool process_record_vinorodrigues(uint16_t keycode, keyrecord_t *record) {
 
         case KC_CLEAR_EEPROM:
             if (record->event.pressed) {
-                rgb_matrix_set_color_all(RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, 0);  // All yellow
+                rgb_matrix_set_color_all(INDICATOR_MAXIMUM_BRIGHTNESS, INDICATOR_MAXIMUM_BRIGHTNESS, 0);  // All yellow
                 rgb_matrix_driver.flush();
                 wait_ms(10);  // give it time
 
@@ -50,7 +57,7 @@ bool process_record_vinorodrigues(uint16_t keycode, keyrecord_t *record) {
 
         case QK_BOOT:
             if (record->event.pressed) {
-                rgb_matrix_set_color_all(RGB_MATRIX_MAXIMUM_BRIGHTNESS, 0, 0);  // All red
+                rgb_matrix_set_color_all(INDICATOR_MAXIMUM_BRIGHTNESS, 0, 0);  // All red
                 rgb_matrix_update_pwm_buffers();
                 wait_ms(10);  // give it time to change LED's
             }
