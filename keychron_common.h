@@ -35,7 +35,7 @@ enum macos_consumer_usages {
 #define KC_TASK KC_TASK_VIEW
 #define KC_FLXP KC_FILE_EXPLORER
 #define KC_SNAP KC_SCREEN_SHOT
-#define KC_CRTN KC_CORTANA
+#define KC_CRTA KC_CORTANA
 
 void keyboard_pre_init_kb(void);
 
@@ -50,12 +50,14 @@ bool process_record_keychron(uint16_t keycode, keyrecord_t *record);
 bool dip_switch_update_keychron(uint8_t index, bool active);
 
 #ifdef RGB_MATRIX_ENABLE
-bool rgb_matrix_indicators_advanced_keychron(uint8_t led_min, uint8_t led_max);
-#endif  // RGB_MATRIX_ENABLE
 
-#if defined(RGB_MATRIX_ENABLE) && ( defined(CAPS_LOCK_LED_INDEX) || \
-    defined(NUM_LOCK_LED_INDEX) || defined(SCROLL_LOCK_LED_INDEX) )
 uint8_t light_brightness_get(void);
+bool rgb_matrix_indicators_advanced_keychron(uint8_t led_min, uint8_t led_max);
+
+#if defined(CAPS_LOCK_LED_INDEX) || defined(NUM_LOCK_LED_INDEX) || defined(SCROLL_LOCK_LED_INDEX)
+
 void rgb_matrix_indicators_keychron(void);
 bool led_update_keychron(led_t led_state);
-#endif  // RGB_MATRIX_ENABLE & CAPS_LOCK_LED_INDEX | NUM_LOCK_LED_INDEX | SCROLL_LOCK_LED_INDEX
+
+#endif  // CAPS_LOCK_LED_INDEX | NUM_LOCK_LED_INDEX | SCROLL_LOCK_LED_INDEX
+#endif  // RGB_MATRIX_ENABLE

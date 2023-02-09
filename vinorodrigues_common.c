@@ -24,8 +24,7 @@ extern void rgb_matrix_update_pwm_buffers(void);
 
 #endif  // RGB_MATRIX_ENABLE
 
-void housekeeping_task_vinorodrigues(void) {
-}
+void housekeeping_task_vinorodrigues(void) { }
 
 bool process_record_vinorodrigues(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
@@ -41,7 +40,7 @@ bool process_record_vinorodrigues(uint16_t keycode, keyrecord_t *record) {
                 soft_reset_keyboard();
                 default_layer_set(default_layer_tmp);
 
-                wait_ms(100);  // give it time
+                wait_ms(10);  // give it time
 
                 return false;
             } else {
@@ -154,6 +153,6 @@ void keyboard_post_init_vinorodrigues(void) {
     #endif  // RGB_MATRIX_ENABLE
 }
 
-void eeconfig_init_vinorodrigues(void) {
-    // EEPROM is getting reset!
-}
+// void eeconfig_init_vinorodrigues(void) {
+//     // EEPROM is getting reset!
+// }

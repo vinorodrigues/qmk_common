@@ -6,9 +6,23 @@
 #ifdef FACTORY_RESET_ENABLE
     #include "keychron_factory_test_common.h"
 #endif  // FACTORY_RESET_ENABLE
-#include "host.h"
-#include "color.h"
+// #include "host.h"
 
+#if defined(CAPS_LOCK_LED_COLOR) || defined(NUM_LOCK_LED_COLOR) || defined(SCROLL_LOCK_LED_COLOR)
+    #include "color_util.h"
+
+    #if defined(CAPS_LOCK_LED_INDEX) && !defined(CAPS_LOCK_LED_COLOR)
+        #define CAPS_LOCK_LED_COLOR RGB_WHITE
+    #endif
+
+    #if defined(NUM_LOCK_LED_INDEX) && !defined(NUM_LOCK_LED_COLOR)
+        #define NUM_LOCK_LED_COLOR RGB_WHITE
+    #endif
+
+    #if defined(SCROLL_LOCK_LED_INDEX) && !defined(SCROLL_LOCK_LED_COLOR)
+        #define SCROLL_LOCK_LED_COLOR RGB_WHITE
+    #endif
+#endif  // x_LOCK_LED_COLOR
 
 #ifdef CAPS_LOCK_LED_COLOR
 RGB caps_lock_led_color;
@@ -23,80 +37,24 @@ RGB scroll_lock_led_color;
 #endif  // SCROLL_LOCK_LED_COLOR
 
 
-#if defined(CAPS_LOCK_LED_COLOR) || defined(NUM_LOCK_LED_COLOR) || defined(SCROLL_LOCK_LED_COLOR) || defined(RGB2HSV_ENABLE)
-
-static RGB __rgb(uint8_t r, uint8_t g, uint8_t b) {
-    RGB rgb;
-    rgb.r = r;
-    rgb.g = g;
-    rgb.b = b;
-    return rgb;
-}
-
-static HSV __hsv(uint8_t h, uint8_t s, uint8_t v) {
-    HSV hsv;
-    hsv.h = h;
-    hsv.s = s;
-    hsv.v = v;
-    return hsv;
-}
-
-static HSV rgb_to_hsv(RGB rgb) {
-    HSV hsv;
-    uint8_t rgbMin, rgbMax;
-
-    rgbMin = rgb.r < rgb.g ? (rgb.r < rgb.b ? rgb.r : rgb.b) : (rgb.g < rgb.b ? rgb.g : rgb.b);
-    rgbMax = rgb.r > rgb.g ? (rgb.r > rgb.b ? rgb.r : rgb.b) : (rgb.g > rgb.b ? rgb.g : rgb.b);
-
-    hsv.v = rgbMax;
-    if (hsv.v == 0) {
-        hsv.h = 0;
-        hsv.s = 0;
-        return hsv;
-    }
-
-    hsv.s = 255 * (rgbMax - rgbMin) / hsv.v;
-    if (hsv.s == 0) {
-        hsv.h = 0;
-        return hsv;
-    }
-
-    if (rgbMax == rgb.r)
-        hsv.h = 0 + 43 * (rgb.g - rgb.b) / (rgbMax - rgbMin);
-    else if (rgbMax == rgb.g)
-        hsv.h = 85 + 43 * (rgb.b - rgb.r) / (rgbMax - rgbMin);
-    else
-        hsv.h = 171 + 43 * (rgb.r - rgb.g) / (rgbMax - rgbMin);
-
-    return hsv;
-}
+#if defined(CAPS_LOCK_LED_COLOR) || defined(NUM_LOCK_LED_COLOR) || defined(SCROLL_LOCK_LED_COLOR)
 
 void keyboard_pre_init_kb(void) {
     keyboard_pre_init_user();
 
-    #ifdef CAPS_LOCK_LED_INDEX
-    #ifdef CAPS_LOCK_LED_COLOR
-    caps_lock_led_color = __rgb(CAPS_LOCK_LED_COLOR);
-    #else
-    caps_lock_led_color = __rgb(RGB_WHITE);
+    #if defined(CAPS_LOCK_LED_COLOR) && defined(CAPS_LOCK_LED_INDEX)
+    caps_lock_led_color = to_rgb(CAPS_LOCK_LED_COLOR);
     #endif  // CAPS_LOCK_LED_COLOR
-    #endif  // CAPS_LOCK_LED_INDEX
 
-    #ifdef NUM_LOCK_LED_INDEX
-    #ifdef NUM_LOCK_LED_COLOR
-    num_lock_led_color = __rgb(NUM_LOCK_LED_COLOR);
-    #else
-    num_lock_led_color = __rgb(RGB_WHITE);
+
+    #if defined(NUM_LOCK_LED_COLOR) && defined(NUM_LOCK_LED_INDEX)
+    num_lock_led_color = to_rgb(NUM_LOCK_LED_COLOR);
     #endif  // NUM_LOCK_LED_COLOR
-    #endif  // NUM_LOCK_LED_INDEX
 
-    #ifdef SCROLL_LOCK_LED_INDEX
-    #ifdef SCROLL_LOCK_LED_COLOR
-    scroll_lock_led_color = __rgb(SCROLL_LOCK_LED_COLOR);
-    #else
-    scroll_lock_led_color = __rgb(RGB_WHITE);
+
+    #if defined(SCROLL_LOCK_LED_COLOR) && defined(SCROLL_LOCK_LED_INDEX)
+    scroll_lock_led_color = to_rgb(SCROLL_LOCK_LED_COLOR);
     #endif  // SCROLL_LOCK_LED_COLOR
-    #endif  // SCROLL_LOCK_LED_INDEX
 }
 
 #endif  // CAPS_LOCK_LED_COLOR | NUM_LOCK_LED_COLOR | SCROLL_LOCK_LED_COLOR
@@ -181,17 +139,6 @@ bool process_record_keychron(uint16_t keycode, keyrecord_t *record) {
 __attribute__((weak)) bool dip_switch_update_keychron(uint8_t index, bool active) { return true; }
 
 #ifdef RGB_MATRIX_ENABLE
-bool rgb_matrix_indicators_advanced_keychron(uint8_t led_min, uint8_t led_max) {
-    #ifdef FACTORY_RESET_ENABLE
-    if (!rgb_matrix_indicators_advanced_ft(led_min, led_max)) {
-        return false;
-    }
-    #endif  // FACTORY_RESET_ENABLE
-    return true;
-}
-#endif  // RGB_MATRIX_ENABLE
-
-#if defined(RGB_MATRIX_ENABLE) && ( defined(CAPS_LOCK_LED_INDEX) || defined(NUM_LOCK_LED_INDEX) || defined(SCROLL_LOCK_LED_INDEX) )
 
 extern void rgb_matrix_update_pwm_buffers(void);
 
@@ -219,12 +166,23 @@ uint8_t light_brightness_get(void) {
     return value;
 }
 
+bool rgb_matrix_indicators_advanced_keychron(uint8_t led_min, uint8_t led_max) {
+    #ifdef FACTORY_RESET_ENABLE
+    if (!rgb_matrix_indicators_advanced_ft(led_min, led_max)) {
+        return false;
+    }
+    #endif  // FACTORY_RESET_ENABLE
+    return true;
+}
+
+#if defined(CAPS_LOCK_LED_INDEX) || defined(NUM_LOCK_LED_INDEX) || defined(SCROLL_LOCK_LED_INDEX)
+
 #if defined(CAPS_LOCK_LED_COLOR) || defined(NUM_LOCK_LED_COLOR) || defined(SCROLL_LOCK_LED_COLOR)
 static void __rgb_matrix_set_color_b(int index, uint8_t r, uint8_t g, uint8_t b) {
     uint8_t v = light_brightness_get();
 
-    HSV hsv = rgb_to_hsv(__rgb(r, g, b));
-    RGB rgb = hsv_to_rgb(__hsv(hsv.h, hsv.s, v));
+    HSV hsv = rgb_to_hsv(to_rgb(r, g, b));
+    RGB rgb = hsv_to_rgb(to_hsv(hsv.h, hsv.s, v));
     rgb_matrix_set_color(index, rgb.r, rgb.g, rgb.b);
 }
 #else
@@ -282,7 +240,7 @@ bool led_update_keychron(led_t led_state) {
         #if defined(ENABLE_RGB_MATRIX_PIXEL_RAIN)
         && (rgb_matrix_get_mode() != RGB_MATRIX_PIXEL_RAIN)
         #endif
-    ) {
+        ) {
         return res;
     }
 
@@ -330,4 +288,5 @@ bool led_update_keychron(led_t led_state) {
     return res;
 }
 
-#endif  // RGB_MATRIX_ENABLE & CAPS_LOCK_LED_INDEX | NUM_LOCK_LED_INDEX | SCROLL_LOCK_LED_INDEX
+#endif  // CAPS_LOCK_LED_INDEX | NUM_LOCK_LED_INDEX | SCROLL_LOCK_LED_INDEX
+#endif  // RGB_MATRIX_ENABLE
