@@ -3,7 +3,6 @@
 
 #include QMK_KEYBOARD_H
 #include "version.h"
-#include "keychron_common.h"
 #include "vinorodrigues_common.h"
 
 #ifdef RGB_MATRIX_ENABLE

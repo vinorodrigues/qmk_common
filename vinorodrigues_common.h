@@ -5,11 +5,17 @@
 
 #include "action.h"
 #include "quantum_keycodes.h"
-#include "keychron_common.h"
+
+#ifndef KC_FIRST_USABLE_USERCODE
+    #ifdef VIA_ENABLE
+        #define KC_FIRST_USABLE_USERCODE (USER00 + 15)
+    #else
+        #define KC_FIRST_USABLE_USERCODE (SAFE_RANGE + 15)
+    #endif 
+#endif  // KC_FIRST_USABLE_USERCODE
 
 enum vinorodrigues_custom_codes {
-    __DONT_USE_LAST_FROM_KC_CODES = KC_CORTANA,
-    KC_CAFFEINE_TOGGLE,
+    KC_CAFFEINE_TOGGLE = KC_FIRST_USABLE_USERCODE,
     KC_ROLL_DICE,
     KC_CLEAR_EEPROM,
     KC_VERSION
